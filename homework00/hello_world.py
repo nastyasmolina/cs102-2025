@@ -1,2 +1,2 @@
 def text():
-    return "Hello, world!"
+    return "message"
