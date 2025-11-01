@@ -25,12 +25,6 @@ def is_prime(n: int) -> bool:
     pass
 
 
-if __name__ == "__main__":
-    import doctest
-
-    doctest.testmod()
-
-
 def gcd(a: int, b: int) -> int:
     """
     Euclid's algorithm for determining the greatest common divisor.
@@ -39,7 +33,9 @@ def gcd(a: int, b: int) -> int:
     >>> gcd(3, 7)
     1
     """
-    # PUT YOUR CODE HERE
+    if b == 0:
+        return abs(a)
+    return gcd(b, a % b)
     pass
 
 
@@ -63,10 +59,10 @@ def generate_keypair(
         raise ValueError("p and q cannot be equal")
 
     # n = pq
-    # PUT YOUR CODE HERE
+    n = p * q
 
     # phi = (p-1)(q-1)
-    # PUT YOUR CODE HERE
+    phi = (p - 1) * (q - 1)
 
     # Choose an integer e such that e and phi(n) are coprime
     e = random.randrange(1, phi)
