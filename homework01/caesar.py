@@ -1,7 +1,6 @@
 def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     """
     Encrypts plaintext using a Caesar cipher.
-
     >>> encrypt_caesar("PYTHON")
     'SBWKRQ'
     >>> encrypt_caesar("python")
@@ -12,23 +11,13 @@ def encrypt_caesar(plaintext: str, shift: int = 3) -> str:
     ''
     """
     ciphertext = ""
-    for char in plaintext:
-        if char.isalpha():
-            if char.isupper():
-                base = ord("A")
-            else:
-                base = ord("a")
-            new_char_code = (ord(char) - base + shift) % 26 + base
-            ciphertext += chr(new_char_code)
-        else:
-            ciphertext += char
+    # PUT YOUR CODE HERE
     return ciphertext
 
 
 def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     """
     Decrypts a ciphertext using a Caesar cipher.
-
     >>> decrypt_caesar("SBWKRQ")
     'PYTHON'
     >>> decrypt_caesar("sbwkrq")
@@ -38,20 +27,6 @@ def decrypt_caesar(ciphertext: str, shift: int = 3) -> str:
     >>> decrypt_caesar("")
     ''
     """
-
     plaintext = ""
-    for char in ciphertext:
-        if char.isalpha():
-            if char.isupper():
-                base = ord("A")
-            else:
-                base = ord("a")
-            new_char_code = (ord(char) - base - shift) % 26 + base
-            plaintext += chr(new_char_code)
-        else:
-            plaintext += char
+    # PUT YOUR CODE HERE
     return plaintext
-
-if __name__ == "__main__":
-    import doctest
-    doctest.testmod(verbose=True)
