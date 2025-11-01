@@ -25,3 +25,15 @@ def is_prime(n: int) -> bool:
             return False
         i += 2
     return True
+
+
+def gcd(a: int, b: int) -> int:
+    """
+    >>> gcd(12, 15)
+    3
+    >>> gcd(3, 7)
+    1
+    """
+    while b != 0:
+        a, b = b, a % b
+    return a
