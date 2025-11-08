@@ -1,5 +1,5 @@
 import random
-from typing import Tuple
+from typing import Tuple, List
 
 
 def is_prime(n: int) -> bool:
@@ -83,3 +83,37 @@ def generate_keypair(p: int, q: int) -> Tuple[Tuple[int, int], Tuple[int, int]]:
     # Return public and private keypair
     # Public key is (e, n) and private key is (d, n)
     return ((e, n), (d, n))
+
+def encrypt(pk: Tuple[int, int], plaintext: str) -> List[int]:
+    # Unpack the key into it's components
+    key, n = pk
+    # Convert each letter in the plaintext to numbers based on
+    # the character using a^b mod m
+    cipher = [(ord(char) ** key) % n for char in plaintext]
+    # Return the array of bytes
+    return cipher
+
+
+def decrypt(pk: Tuple[int, int], ciphertext: List[int]) -> str:
+    # Unpack the key into its components
+    key, n = pk
+    # Generate the plaintext based on the ciphertext and key using a^b mod m
+    plain = [chr((char ** key) % n) for char in ciphertext]
+    # Return the array of bytes as a string
+    return "".join(plain)
+
+
+if __name__ == "__main__":
+    print("RSA Encrypter/ Decrypter")
+    p = int(input("Enter a prime number (17, 19, 23, etc): "))
+    q = int(input("Enter another prime number (Not one you entered above): "))
+    print("Generating your public/private keypairs now . . .")
+    public, private = generate_keypair(p, q)
+    print("Your public key is ", public, " and your private key is ", private)
+    message = input("Enter a message to encrypt with your private key: ")
+    encrypted_msg = encrypt(private, message)
+    print("Your encrypted message is: ")
+    print("".join(map(lambda x: str(x), encrypted_msg)))
+    print("Decrypting message with public key ", public, " . . .")
+    print("Your message is:")
+    print(decrypt(public, encrypted_msg))
