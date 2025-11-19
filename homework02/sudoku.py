@@ -23,7 +23,12 @@ def display(grid: tp.List[tp.List[str]]) -> None:
     width = 2
     line = "+".join(["-" * (width * 3)] * 3)
     for row in range(9):
-        print("".join(grid[row][col].center(width) + ("|" if str(col) in "25" else "") for col in range(9)))
+        print(
+            "".join(
+                grid[row][col].center(width) + ("|" if str(col) in "25" else "")
+                for col in range(9)
+            )
+        )
         if str(row) in "25":
             print(line)
     print()
@@ -52,7 +57,7 @@ def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     >>> get_row([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (2, 0))
     ['.', '8', '9']
     """
-    row, col = pos
+    row, _ = pos
     return grid[row]
 
 
@@ -65,7 +70,7 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     >>> get_col([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']], (0, 2))
     ['3', '6', '9']
     """
-    row, col = pos
+    _, col = pos
     return [grid[i][col] for i in range(len(grid))]
 
 
@@ -108,7 +113,9 @@ def find_empty_positions(
     return None
 
 
-def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
+def find_possible_values(
+    grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]
+) -> tp.Set[str]:
     """Вернуть множество возможных значения для указанной позиции
     >>> grid = read_sudoku('puzzle1.txt')
     >>> values = find_possible_values(grid, (0,2))
@@ -144,15 +151,15 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
     [['5', '3', '4', '6', '7', '8', '9', '1', '2'], ['6', '7', '2', '1', '9', '5', '3', '4', '8'], ['1', '9', '8', '3', '4', '2', '5', '6', '7'], ['8', '5', '9', '7', '6', '1', '4', '2', '3'], ['4', '2', '6', '8', '5', '3', '7', '9', '1'], ['7', '1', '3', '9', '2', '4', '8', '5', '6'], ['9', '6', '1', '5', '3', '7', '2', '8', '4'], ['2', '8', '7', '4', '1', '9', '6', '3', '5'], ['3', '4', '5', '2', '8', '6', '1', '7', '9']]
     """
     empty_pos = find_empty_positions(grid)
-    if empty_pos is None:
+    if not empty_pos:
         return grid
 
     row, col = empty_pos
-    possible_values = find_possible_values(grid, (row, col))
+    possible_values = find_possible_values(grid, empty_pos)
     for value in possible_values:
         grid[row][col] = value
         solution = solve(grid)
-        if solution is not None:
+        if solution:
             return solution
 
         grid[row][col] = "."
@@ -161,20 +168,17 @@ def solve(grid: tp.List[tp.List[str]]) -> tp.Optional[tp.List[tp.List[str]]]:
 
 def check_solution(solution: tp.List[tp.List[str]]) -> bool:
     """Если решение solution верно, то вернуть True, в противном случае False"""
+    expected_set = set("123456789")
     for i in range(9):
-        row = get_row(solution, (i, 0))
-        if set(row) != set("123456789"):
+        if set(get_row(solution, (i, 0))) != expected_set:
             return False
 
-    for j in range(9):
-        col = get_col(solution, (0, j))
-        if set(col) != set("123456789"):
+        if set(get_col(solution, (0, i))) != expected_set:
             return False
 
     for i in range(0, 9, 3):
         for j in range(0, 9, 3):
-            block = get_block(solution, (i, j))
-            if set(block) != set("123456789"):
+            if set(get_block(solution, (i, j))) != expected_set:
                 return False
 
     return True
@@ -203,12 +207,10 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
     """
     grid = [["." for _ in range(9)] for _ in range(9)]
     solved_grid = solve(grid)
-    if solved_grid is None:
-        return grid
     if N >= 81:
         return solved_grid
 
-    result = [row[:] for row in solved_grid]
+    result = solved_grid
     positions = [(i, j) for i in range(9) for j in range(9)]
     import random
 
