@@ -1,5 +1,6 @@
 import pathlib
 import typing as tp
+import random
 
 T = tp.TypeVar("T")
 
@@ -37,10 +38,8 @@ def group(values: tp.List[T], n: int) -> tp.List[tp.List[T]]:
     >>> group([1,2,3,4,5,6,7,8,9], 3)
     [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
     """
-    result = []
-    for i in range(0, len(values), n):
-        result.append(values[i : i + n])
-    return result
+    return [values[i:i + n] for i in range(0, len(values), n)]
+
 
 
 def get_row(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -66,7 +65,7 @@ def get_col(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str
     ['3', '6', '9']
     """
     _, col = pos
-    return [grid[i][col] for i in range(len(grid))]
+    return [grid[row][col] for row in range(len(grid))]
 
 
 def get_block(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.List[str]:
@@ -101,12 +100,11 @@ def find_empty_positions(
     >>> find_empty_positions([['1', '2', '3'], ['4', '5', '6'], ['.', '8', '9']])
     (2, 0)
     """
-    for i in range(len(grid)):
-        for j in range(len(grid[i])):
-            if grid[i][j] == ".":
+    for i, row in enumerate(grid):
+        for j, value in enumerate(row):
+            if value == '.':
                 return (i, j)
     return None
-
 
 def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -> tp.Set[str]:
     """Вернуть множество возможных значения для указанной позиции
@@ -127,7 +125,7 @@ def find_possible_values(grid: tp.List[tp.List[str]], pos: tp.Tuple[int, int]) -
     block_values = set(get_block(grid, pos))
 
     used_values = (row_values | col_values | block_values) - {"."}
-    all_values = set(str(i) for i in range(1, 10))
+    all_values = {str(i) for i in range(1, 10)}
     return all_values - used_values
 
 
@@ -208,7 +206,6 @@ def generate_sudoku(N: int) -> tp.List[tp.List[str]]:
 
     result = solved_grid
     positions = [(i, j) for i in range(9) for j in range(9)]
-    import random
 
     random.shuffle(positions)
 
