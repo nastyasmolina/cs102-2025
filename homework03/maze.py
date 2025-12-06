@@ -11,41 +11,34 @@ def create_grid(rows: int = 15, cols: int = 15) -> List[List[Union[str, int]]]:
 
 def remove_wall(grid: List[List[Union[str, int]]], coord: Tuple[int, int]) -> List[List[Union[str, int]]]:
     """
-    Убирает стену между выбранной клеткой и соседней (вверх или вправо) для алгоритма Binary Tree.
 
-    :param grid: текущая сетка
-    :param coord: координаты клетки (y, x)
-    :return: обновлённая сетка
+    :param grid:
+    :param coord:
+    :return:
     """
-
-    y, x = coord
-    y_remove, x_remove = y, x
-    cols = len(grid[0])
-
-    decision = choice(("up", "right"))
-    if decision == "up" and 0 <= y - 2:
-        y_remove, x_remove = y - 1, x
+    x, y = coord
+    index_last_col = len(grid[0]) - 1
+    direction = choice(("up", "right"))
+    if direction == "up":
+        if x > 1:
+            grid[x - 1][y] = " "
+        elif y < index_last_col - 1:
+            grid[x][y + 1] = " "
     else:
-        decision = "right"
-
-    if decision == "right" and x + 2 < cols - 1:
-        y_remove, x_remove = y, x + 1
-    elif 0 <= y - 2 and x < cols - 1:
-        y_remove, x_remove = y - 1, x
-
-    grid[y_remove][x_remove] = " "
-
+        if y < index_last_col - 1:
+            grid[x][y + 1] = " "
+        elif x > 1:
+            grid[x - 1][y] = " "
     return grid
 
 
 def bin_tree_maze(rows: int = 15, cols: int = 15, random_exit: bool = True) -> List[List[Union[str, int]]]:
     """
-    Генерирует лабиринт по алгоритму Binary Tree.
 
-    :param rows: число строк
-    :param cols: число столбцов
-    :param random_exit: True — случайные вход и выход, False — фиксированные
-    :return: сетка лабиринта с входом и выходом, отмеченными "X"
+    :param rows:
+    :param cols:
+    :param random_exit:
+    :return:
     """
 
     grid = create_grid(rows, cols)
@@ -56,9 +49,14 @@ def bin_tree_maze(rows: int = 15, cols: int = 15, random_exit: bool = True) -> L
                 grid[x][y] = " "
                 empty_cells.append((x, y))
 
-    for cell in empty_cells:
-        grid = remove_wall(grid, cell)
-
+    # 1. выбрать любую клетку
+    # 2. выбрать направление: наверх или направо.
+    # Если в выбранном направлении следующая клетка лежит за границами поля,
+    # выбрать второе возможное направление
+    # 3. перейти в следующую клетку, сносим между клетками стену
+    # 4. повторять 2-3 до тех пор, пока не будут пройдены все клетки
+    for current_cell in empty_cells:
+        remove_wall(grid, current_cell)
     if random_exit:
         x_in, x_out = randint(0, rows - 1), randint(0, rows - 1)
         y_in = randint(0, cols - 1) if x_in in (0, rows - 1) else choice((0, cols - 1))
@@ -66,137 +64,169 @@ def bin_tree_maze(rows: int = 15, cols: int = 15, random_exit: bool = True) -> L
     else:
         x_in, y_in = 0, cols - 2
         x_out, y_out = rows - 1, 1
-
     grid[x_in][y_in], grid[x_out][y_out] = "X", "X"
-
     return grid
 
 
 def get_exits(grid: List[List[Union[str, int]]]) -> List[Tuple[int, int]]:
-    """ "
-    Находит все клетки входа/выхода ("X") в лабиринте.
-
-    :param grid: сетка лабиринта
-    :return: список координат выходов [(y, x), ...]
     """
 
-    return [(y, x) for y, row in enumerate(grid) for x, s in enumerate(row) if s == "X"]
+    :param grid:
+    :return:
+    """
+    exits = []
+    for x, row in enumerate(grid):
+        for y, cell in enumerate(row):
+            if cell == "X":
+                exits.append((x, y))
+    return exits
 
 
 def make_step(grid: List[List[Union[str, int]]], k: int) -> List[List[Union[str, int]]]:
     """
-    Выполняет один шаг распространения чисел для поиска пути через лабиринт.
 
-    :param grid: сетка лабиринта с заполненными числами и пустыми клетками
-    :param k: текущее число, которое распространяется
-    :return: обновлённая сетка с увеличенными числами
+    :param grid:
+    :param k:
+    :return:
     """
-    rows = len(grid)
-    cols = len(grid[0])
-    for y, row in enumerate(grid):
-        for x, s in enumerate(row):
-            if s == k:
-                k += 1
-                for fill_x, fill_y in [(x, y + 1), (x, y - 1), (x + 1, y), (x - 1, y)]:
-                    if fill_x in range(0, cols) and fill_y in range(0, rows):
-                        if grid[fill_y][fill_x] == 0:
-                            grid[fill_y][fill_x] = k
-                k -= 1
+    new_grid = deepcopy(grid)
 
-    return grid
+    for x in range(len(grid)):
+        for y in range(len(grid[0])):
+            if grid[x][y] == k:
+
+                if x > 0 and grid[x - 1][y] == 0:
+                    new_grid[x - 1][y] = k + 1
+                if x < len(grid) - 1 and grid[x + 1][y] == 0:
+                    new_grid[x + 1][y] = k + 1
+                if y > 0 and grid[x][y - 1] == 0:
+                    new_grid[x][y - 1] = k + 1
+                if y < len(grid[0]) - 1 and grid[x][y + 1] == 0:
+                    new_grid[x][y + 1] = k + 1
+
+    return new_grid
 
 
 def shortest_path(
     grid: List[List[Union[str, int]]], exit_coord: Tuple[int, int]
 ) -> Optional[Union[Tuple[int, int], List[Tuple[int, int]]]]:
     """
-    Восстанавливает кратчайший путь от выхода до входа по пронумерованным клеткам.
 
-    :param grid: сетка с пронумерованными шагами
-    :param exit_coord: координаты выхода (y, x)
-    :return: список координат пути или кортеж, если путь одной клетки
+    :param grid:
+    :param exit_coord:
+    :return:
     """
-    rows = len(grid)
-    cols = len(grid[0])
+    x, y = exit_coord
+    val = grid[x][y]
 
-    y, x = exit_coord
-    k = int(grid[y][x])
-    path = [(y, x)]
-    while grid[y][x] != 1:
-        for check_x, check_y in [(x, y + 1), (x, y - 1), (x + 1, y), (x - 1, y)]:
-            if check_x in range(0, cols) and check_y in range(0, rows):
-                if grid[check_y][check_x] == k - 1:
-                    path.append((check_y, check_x))
-                    k -= 1
-                    x, y = check_x, check_y
-                    break
+    if type(val) != int or val == 0:
+        return None
+
+    path = []
+
+    while val >= 1:
+        path.append((x, y))
+
+        if val == 1:
+            break
+
+        val -= 1
+        if x > 0 and grid[x - 1][y] == val:
+            x -= 1
+        elif x < len(grid) - 1 and grid[x + 1][y] == val:
+            x += 1
+        elif y > 0 and grid[x][y - 1] == val:
+            y -= 1
+        elif y < len(grid[0]) - 1 and grid[x][y + 1] == val:
+            y += 1
+        else:
+            return None
 
     return path
 
 
 def encircled_exit(grid: List[List[Union[str, int]]], coord: Tuple[int, int]) -> bool:
     """
-    Проверяет, окружён ли указанный выход стенами или находится в углу.
 
-    :param grid: сетка лабиринта
-    :param coord: координаты клетки выхода (y, x)
-    :return: True если выход окружён стенами, иначе False
+    :param grid:
+    :param coord:
+    :return:
     """
-
+    x, y = coord
     rows = len(grid)
     cols = len(grid[0])
-    y, x = coord
 
-    if (x, y) in [(0, 0), (0, cols - 1), (rows - 1, 0), (rows - 1, cols - 1)]:
-        return True
+    if not (x == 0 or x == rows - 1 or y == 0 or y == cols - 1):
+        return False
 
-    if (
-        (y == 0 and grid[y + 1][x] != " ")
-        or (x == cols - 1 and grid[y][x - 1] != " ")
-        or (y == rows - 1 and grid[y - 1][x] != " ")
-        or (x == 0 and grid[y][x + 1] != " ")
-    ):
-        return True
+    walls = 0
+    possible = 0
 
-    return False
+    if x > 0:
+        possible += 1
+        if grid[x - 1][y] == "■":
+            walls += 1
+    if x < rows - 1:
+        possible += 1
+        if grid[x + 1][y] == "■":
+            walls += 1
+    if y > 0:
+        possible += 1
+        if grid[x][y - 1] == "■":
+            walls += 1
+    if y < cols - 1:
+        possible += 1
+        if grid[x][y + 1] == "■":
+            walls += 1
+
+    return walls == possible
 
 
 def solve_maze(
     grid: List[List[Union[str, int]]],
 ) -> Tuple[List[List[Union[str, int]]], Optional[Union[Tuple[int, int], List[Tuple[int, int]]]]]:
     """
-    Находит путь через лабиринт от входа до выхода.
 
-    :param grid: сетка лабиринта с входом и выходом
-    :return: обновлённая сетка и список координат пути, либо None если путь невозможен
+    :param grid:
+    :return:
     """
+    doors = get_exits(grid)
 
-    exits = get_exits(grid)
+    if len(doors) != 2:
+        return grid, None if not doors else [doors[0]]
 
-    if len(set(exits)) == 1:
-        return grid, exits[0]
+    start, end = doors
 
-    for exit_pos in exits:
-        if encircled_exit(grid, exit_pos):
-            return grid, None
+    if encircled_exit(grid, start):
+        return grid, None
 
-    (y_in, x_in), (y_out, x_out) = exits
+    maze = deepcopy(grid)
 
-    grid[y_in][x_in] = 1
-    grid[y_out][x_out] = 0
+    for i in range(len(maze)):
+        for j in range(len(maze[0])):
+            if maze[i][j] == "X":
+                maze[i][j] = 1 if (i, j) == start else 0
+            elif maze[i][j] == " ":
+                maze[i][j] = 0
 
-    for y, row in enumerate(grid):
-        for x, s in enumerate(row):
-            if s == " ":
-                grid[y][x] = 0
+    step = 1
+    while maze[end[0]][end[1]] == 0:
+        maze = make_step(maze, step)
+        step += 1
+        if step > 1000:
+            break
 
-    k = 0
-    while grid[y_out][x_out] == 0:
-        k += 1
-        grid = make_step(grid, k)
+    if maze[end[0]][end[1]] == 0:
+        return maze, None
 
-    path = shortest_path(grid, (y_out, x_out))
-    return grid, path
+    path_from_exit_to_enter = shortest_path(maze, end)
+
+    if not path_from_exit_to_enter:
+        return maze, None
+
+    path_from_enter_to_exit = path_from_exit_to_enter
+
+    return maze, path_from_enter_to_exit
 
 
 def add_path_to_grid(
@@ -204,11 +234,10 @@ def add_path_to_grid(
     path: Optional[Union[Tuple[int, int], List[Tuple[int, int]]]],
 ) -> List[List[Union[str, int]]]:
     """
-    Отмечает путь в лабиринте, заменяя клетки на "X".
 
-    :param grid: сетка лабиринта
-    :param path: список координат пути
-    :return: сетка с отмеченным путем
+    :param grid:
+    :param path:
+    :return:
     """
 
     if path:

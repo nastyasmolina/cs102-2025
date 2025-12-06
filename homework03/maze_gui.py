@@ -1,8 +1,8 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
-from typing import List, Union
+from tkinter import messagebox, ttk
+from typing import List
 
-from maze import bin_tree_maze, solve_maze, add_path_to_grid
+from maze import add_path_to_grid, bin_tree_maze, solve_maze
 
 
 def draw_cell(x, y, color, size: int = 10):
@@ -13,7 +13,7 @@ def draw_cell(x, y, color, size: int = 10):
     canvas.create_rectangle(x, y, x1, y1, fill=color)
 
 
-def draw_maze(grid: List[List[Union[str, int]]], size: int = 10):
+def draw_maze(grid: List[List[str]], size: int = 10):
     for x, row in enumerate(grid):
         for y, cell in enumerate(row):
             if cell == " ":
@@ -37,7 +37,6 @@ def show_solution():
 if __name__ == "__main__":
     global GRID, CELL_SIZE
     N, M = 51, 77
-
     CELL_SIZE = 10
     GRID = bin_tree_maze(N, M)
 
