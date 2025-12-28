@@ -1,5 +1,6 @@
 def __init__(self, life: GameOfLife) -> None:
-        super().__init__(life)
+    super().__init__(life)
+
 
 def draw_borders(self, screen) -> None:
     """Отобразить рамку."""
@@ -10,6 +11,8 @@ def draw_borders(self, screen) -> None:
     for row_number in range(1, rows - 1):
         screen.addstr(row_number, 0, "|")
         screen.addstr(row_number, cols - 1, "|")
+
+
 def draw_grid(self, screen) -> None:
     """Отобразить состояние клеток."""
     screen.clear()
@@ -22,12 +25,14 @@ def draw_grid(self, screen) -> None:
                 break
             screen.addch(i, j, "1" if cell else " ")
     screen.refresh()
+
+
 def run(self) -> None:
     """
-        Запуск консольной версии игры «Жизнь».
-        Управление:
-        - клавиша 'q' — выход из игры
-        """
+    Запуск консольной версии игры «Жизнь».
+    Управление:
+    - клавиша 'q' — выход из игры
+    """
     screen = curses.initscr()
     curses.noecho()
     curses.cbreak()
@@ -37,11 +42,11 @@ def run(self) -> None:
     try:
         while self.life.is_changing and not self.life.is_max_generations_exceeded:
             """
-                Основной игровой цикл.
-                Игра автоматически обновляет поколения клеток,
-                пока состояние поля изменяется и не достигнут
-                максимум поколений.
-                """
+            Основной игровой цикл.
+            Игра автоматически обновляет поколения клеток,
+            пока состояние поля изменяется и не достигнут
+            максимум поколений.
+            """
             screen.clear()
             self.draw_borders(screen)
             self.draw_grid(screen)
@@ -67,4 +72,3 @@ if __name__ == "__main__":
     game = GameOfLife(size=(10, 40), randomize=True)
     ui = Console(game)
     ui.run()
-    
