@@ -32,7 +32,6 @@ class GameOfLife:
         self.cell_width = self.width // self.cell_size
         self.cell_height = self.height // self.cell_size
 
-        # Инициализация сетки клеток
         self.grid: Grid = self.create_grid(randomize=True)
 
     def create_grid(self, randomize: bool = False) -> Grid:
@@ -86,7 +85,7 @@ class GameOfLife:
 
     def run(self) -> None:
         """Запустить прототип игры."""
-        pygame.init()  # pylint: disable=no-member
+        pygame.init() 
         clock = pygame.time.Clock()
         pygame.display.set_caption("Game of Life Prototype")
         running = True
@@ -100,13 +99,12 @@ class GameOfLife:
             self.draw_grid()
             self.draw_lines()
 
-            # Вычисляем новое поколение
             self.grid = self.get_next_generation()
 
             pygame.display.flip()
             clock.tick(self.speed)
 
-        pygame.quit()  # pylint: disable=no-member
+        pygame.quit() 
         print("Прототип игры завершён.")
 
 
