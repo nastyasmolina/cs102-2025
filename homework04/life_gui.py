@@ -8,14 +8,7 @@
 """
 
 import pygame
-from pygame.locals import (
-    KEYDOWN,
-    K_ESCAPE,
-    K_SPACE,
-    K_r,
-    MOUSEBUTTONDOWN,
-    QUIT,
-)
+from pygame.locals import K_ESCAPE, K_SPACE, KEYDOWN, MOUSEBUTTONDOWN, QUIT, K_r
 
 from life import GameOfLife
 from ui import UI
