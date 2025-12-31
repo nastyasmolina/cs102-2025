@@ -9,12 +9,12 @@
 
 import pygame
 from pygame.locals import (
+    KEYDOWN,
     K_ESCAPE,
     K_SPACE,
-    KEYDOWN,
+    K_r,
     MOUSEBUTTONDOWN,
     QUIT,
-    K_r,
 )
 
 from life import GameOfLife
