@@ -8,14 +8,13 @@
 """
 
 import pygame
-
 from pygame.locals import (
-    KEYDOWN,
     K_ESCAPE,
-    K_r,
     K_SPACE,
+    KEYDOWN,
     MOUSEBUTTONDOWN,
     QUIT,
+    K_r,
 )
 
 from life import GameOfLife
@@ -66,7 +65,11 @@ class GUI(UI):
         """Нарисовать текущее состояние клеток."""
         for row in range(self.life.rows):
             for col in range(self.life.cols):
-                color = pygame.Color("green") if self.life.curr_generation[row][col] == 1 else pygame.Color("white")
+                color = (
+                    pygame.Color("green")
+                    if self.life.curr_generation[row][col] == 1
+                    else pygame.Color("white")
+                )
                 rect = pygame.Rect(
                     col * self.cell_size,
                     row * self.cell_size,
@@ -142,7 +145,5 @@ class GUI(UI):
 
 if __name__ == "__main__":
     game = GameOfLife(size=(40, 60), randomize=True, max_generations=1000)
-
     gui = GUI(game, cell_size=15, speed=10)
-
     gui.run()
