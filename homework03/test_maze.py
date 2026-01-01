@@ -1,6 +1,8 @@
 import unittest
 from random import seed
+
 import maze
+
 
 class MazeTest(unittest.TestCase):
     def test_remove_wall(self):
@@ -239,19 +241,19 @@ class MazeTest(unittest.TestCase):
         # Проверяем, что решение существует и является валидным
         self.assertIsNotNone(path_)
         self.assertIsNotNone(solved_grid)
-        
+
         seed(4)
         grid = maze.bin_tree_maze(5, 5)
         solved_grid, path_ = maze.solve_maze(grid)
         self.assertIsNotNone(path_)
         self.assertIsNotNone(solved_grid)
-        
+
         seed(44)
         grid = maze.bin_tree_maze(5, 5)
         solved_grid, path_ = maze.solve_maze(grid)
         self.assertIsNotNone(path_)
         self.assertIsNotNone(solved_grid)
-        
+
         seed(131)
         grid = maze.bin_tree_maze(5, 5)
         solved_grid, path_ = maze.solve_maze(grid)
@@ -260,7 +262,7 @@ class MazeTest(unittest.TestCase):
             self.assertIsNone(path_)
         else:
             self.assertIsNotNone(path_)
-        
+
         seed(151)
         grid = maze.bin_tree_maze(5, 5)
         solved_grid, path_ = maze.solve_maze(grid)
@@ -268,7 +270,7 @@ class MazeTest(unittest.TestCase):
             self.assertIsNone(path_)
         else:
             self.assertIsNotNone(path_)
-        
+
         seed(773)
         grid = maze.bin_tree_maze(5, 5)
         solved_grid, path_ = maze.solve_maze(grid)
@@ -284,7 +286,10 @@ class MazeTest(unittest.TestCase):
             ["■", "■", "■", 5, "■"],
         ]
         second_exit_1 = (4, 3)
-        self.assertEqual([(4, 3), (3, 3), (3, 2), (3, 1), (3, 0)], maze.shortest_path(grid_1, second_exit_1))
+        self.assertEqual(
+            [(4, 3), (3, 3), (3, 2), (3, 1), (3, 0)],
+            maze.shortest_path(grid_1, second_exit_1),
+        )
 
         grid_2 = [
             ["■", "■", "■", "■", "■", 1, "■"],
@@ -332,6 +337,7 @@ class MazeTest(unittest.TestCase):
             ],
             maze.shortest_path(grid_3, second_exit_3),
         )
+
 
 if __name__ == "__main__":
     unittest.main()
