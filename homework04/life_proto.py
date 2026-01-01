@@ -21,7 +21,9 @@ Grid = tp.List[Cells]
 class GameOfLife:
     """Прототип графической игры 'Жизнь' с базовой сеткой и логикой поколений."""
 
-    def __init__(self, width: int = 640, height: int = 480, cell_size: int = 10, speed: int = 10) -> None:
+    def __init__(
+        self, width: int = 640, height: int = 480, cell_size: int = 10, speed: int = 10
+    ) -> None:
         self.width = width
         self.height = height
         self.cell_size = cell_size
@@ -46,16 +48,25 @@ class GameOfLife:
     def draw_lines(self) -> None:
         """Отрисовать сетку."""
         for x in range(0, self.width, self.cell_size):
-            pygame.draw.line(self.screen, pygame.Color("black"), (x, 0), (x, self.height))
+            pygame.draw.line(
+                self.screen, pygame.Color("black"), (x, 0), (x, self.height)
+            )
         for y in range(0, self.height, self.cell_size):
-            pygame.draw.line(self.screen, pygame.Color("black"), (0, y), (self.width, y))
+            pygame.draw.line(
+                self.screen, pygame.Color("black"), (0, y), (self.width, y)
+            )
 
     def draw_grid(self) -> None:
         """Отрисовать клетки."""
         for i, row in enumerate(self.grid):
             for j, cell in enumerate(row):
                 color = pygame.Color("green") if cell else pygame.Color("white")
-                rect = pygame.Rect(j * self.cell_size, i * self.cell_size, self.cell_size, self.cell_size)
+                rect = pygame.Rect(
+                    j * self.cell_size,
+                    i * self.cell_size,
+                    self.cell_size,
+                    self.cell_size,
+                )
                 pygame.draw.rect(self.screen, color, rect)
 
     def get_neighbours(self, cell: Cell) -> Cells:
@@ -85,7 +96,7 @@ class GameOfLife:
 
     def run(self) -> None:
         """Запустить прототип игры."""
-        pygame.init() 
+        pygame.init()
         clock = pygame.time.Clock()
         pygame.display.set_caption("Game of Life Prototype")
         running = True
@@ -104,7 +115,7 @@ class GameOfLife:
             pygame.display.flip()
             clock.tick(self.speed)
 
-        pygame.quit() 
+        pygame.quit()
         print("Прототип игры завершён.")
 
 
