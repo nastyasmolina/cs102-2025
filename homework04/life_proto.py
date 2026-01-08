@@ -70,7 +70,7 @@ class GameOfLife:
                 pygame.draw.rect(self.screen, color, rect)
 
     def get_neighbours(self, cell: Cell) -> Cells:
-        """Вернуть список соседних клеток для клетки (i, j)."""
+        """Вернуть список значений соседних клеток для клетки (i, j)."""
         row, col = cell
         neighbours = []
         for i in range(-1, 2):
@@ -99,6 +99,8 @@ class GameOfLife:
         pygame.init()
         clock = pygame.time.Clock()
         pygame.display.set_caption("Game of Life Prototype")
+        self.screen.fill(pygame.Color("white"))
+
         running = True
 
         while running:
